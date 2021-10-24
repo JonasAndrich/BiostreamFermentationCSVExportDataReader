@@ -197,7 +197,7 @@ def parse_contents(contents):
     decoded = base64.b64decode(content_string)
     try:
         data = pd.read_csv(
-            io.StringIO(decoded.decode("ANSI")),
+            io.StringIO(decoded.decode("mbcs")),
             sep=";",
             decimal=",",
             encoding="utf-8")
