@@ -24,6 +24,7 @@ from plotly.subplots import make_subplots
 # System
 import base64
 import io
+import codecs
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -195,9 +196,12 @@ def update_figure(YValue1, YValue2, XValue, contents):
 def parse_contents(contents):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
+    #print(type(decoded))
+
     try:
+        string = codecs.decode(decoded, encoding="iso8859_15", errors='replace')
         data = pd.read_csv(
-            io.StringIO(decoded.decode("mbcs")),
+            io.StringIO(string),
             sep=";",
             decimal=",",
             encoding="utf-8")
@@ -210,6 +214,9 @@ def parse_contents(contents):
         data["time [s]"] = data["time [s]"].dt.total_seconds()
         data['time [h]'] = data["time [s]"] / 3600
         df = data.rename(columns={'pO? Value': "pO2 Value (%)"})
+        df = df.rename(columns={'pO? Setpoint': "pO2 Setpoint (%)"})
+        df = df.rename(columns={'pO? Output': "pO2 Output"})
+        df = df.rename(columns={'pO? Parameterstatus': "pO2 Parameterstatus"})
 
     except Exception as e:
         print(e)
